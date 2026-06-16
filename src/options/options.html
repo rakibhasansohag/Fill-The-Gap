@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fill The Gap — Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-icon">
+          <svg class="logo-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </span>
+        <div>
+          <div class="logo-title">Fill The Gap</div>
+          <div class="logo-sub">Settings</div>
+        </div>
+      </div>
+      <ul class="sidebar-nav">
+        <li><a href="#" class="nav-item active" data-tab="api-keys">
+          <span class="nav-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+            </svg>
+          </span> API Keys
+        </a></li>
+        <li><a href="#" class="nav-item" data-tab="manual-fields">
+          <span class="nav-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </span> Manual Fields
+          <span id="manual-fields-badge" class="nav-badge hidden">0</span>
+        </a></li>
+        <li><a href="#" class="nav-item" data-tab="ai-settings">
+          <span class="nav-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="4" width="16" height="16" rx="2"/>
+              <rect x="9" y="9" width="6" height="6"/>
+              <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3"/>
+            </svg>
+          </span> AI Settings
+        </a></li>
+      </ul>
+      <div class="sidebar-footer">
+        <div class="version-info">Version 1.0.0</div>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <!-- ── API Keys Tab ─────────────────────────────────────── -->
+      <section id="tab-api-keys" class="tab-content active">
+        <div class="section-header">
+          <h1 class="section-title">API Keys</h1>
+          <p class="section-desc">
+            Add your Gemini API keys. They will rotate automatically on rate limits or errors.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Import Keys</h2>
+          </div>
+          <div class="card-body">
+            <label class="field-label">Paste keys (comma-separated or GEMINI_KEYS= format)</label>
+            <textarea
+              id="keys-input"
+              class="keys-textarea"
+              placeholder="GEMINI_KEYS=AIza...,AIza...,AIza...&#10;or just:&#10;AIza...,AIza...,AIza..."
+              rows="4"
+            ></textarea>
+            <div class="btn-row">
+              <button id="import-keys-btn" class="btn-primary">Import Keys</button>
+              <button id="clear-keys-btn" class="btn-ghost">Clear All Keys</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="keys-status-card">
+          <div class="card-header">
+            <h2 class="card-title">Key Status</h2>
+            <span id="total-keys-label" class="badge-info">0 keys</span>
+          </div>
+          <div class="card-body">
+            <div id="keys-list" class="keys-list">
+              <div class="empty-state">No API keys configured yet.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Manual Fields Tab ───────────────────────────────── -->
+      <section id="tab-manual-fields" class="tab-content">
+        <div class="section-header">
+          <h1 class="section-title">Manual Fields</h1>
+          <p class="section-desc">
+            Store sensitive or fixed values here. These are <strong>never sent to AI</strong>.
+            Each key must be unique — adding the same key updates its value.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Add / Update Field</h2>
+          </div>
+          <div class="card-body">
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Field Key <span class="required">*</span></label>
+                <input
+                  id="new-key-input"
+                  class="input"
+                  type="text"
+                  placeholder="e.g. email, password, phone, name..."
+                />
+                <span class="field-hint">Key is normalized to lowercase. Duplicate keys update existing value.</span>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Value <span class="required">*</span></label>
+                <input
+                  id="new-val-input"
+                  class="input"
+                  type="text"
+                  placeholder="The value to store"
+                />
+              </div>
+            </div>
+
+            <!-- Quick Add Templates -->
+            <div class="schema-templates-container">
+              <label class="field-label">Quick Add Templates</label>
+              <div class="schema-grid">
+                <button type="button" class="schema-chip" data-key="email">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  email
+                </button>
+                <button type="button" class="schema-chip" data-key="password">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  password
+                </button>
+                <button type="button" class="schema-chip" data-key="username">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  username
+                </button>
+                <button type="button" class="schema-chip" data-key="first_name">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  first_name
+                </button>
+                <button type="button" class="schema-chip" data-key="last_name">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  last_name
+                </button>
+                <button type="button" class="schema-chip" data-key="phone">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  phone
+                </button>
+                <button type="button" class="schema-chip" data-key="company">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                  company
+                </button>
+                <button type="button" class="schema-chip" data-key="postal_code">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  postal_code
+                </button>
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button id="add-field-btn" class="btn-primary">Save Field</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Stored Fields</h2>
+            <span id="field-count-label" class="badge-info">0 fields</span>
+          </div>
+          <div class="card-body">
+            <div id="fields-list" class="fields-list">
+              <div class="empty-state">No manual fields stored yet.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── AI Settings Tab ─────────────────────────────────── -->
+      <section id="tab-ai-settings" class="tab-content">
+        <div class="section-header">
+          <h1 class="section-title">AI Settings</h1>
+          <p class="section-desc">Configure how the AI generates form field values.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Generation Style</h2>
+          </div>
+          <div class="card-body">
+            <div class="style-options">
+              <label class="style-option" id="style-professional">
+                <input type="radio" name="gen-style" value="professional" checked />
+                <div class="style-card">
+                  <div class="style-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                    </svg>
+                  </div>
+                  <div class="style-name">Professional</div>
+                  <div class="style-desc">Formal, realistic, industry-standard values</div>
+                </div>
+              </label>
+              <label class="style-option" id="style-casual">
+                <input type="radio" name="gen-style" value="casual" />
+                <div class="style-card">
+                  <div class="style-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </div>
+                  <div class="style-name">Casual</div>
+                  <div class="style-desc">Relaxed, everyday, friendly values</div>
+                </div>
+              </label>
+              <label class="style-option" id="style-random">
+                <input type="radio" name="gen-style" value="random" />
+                <div class="style-card">
+                  <div class="style-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="16 3 21 3 21 8"/>
+                      <line x1="4" y1="20" x2="21" y2="3"/>
+                      <polyline points="21 16 21 21 16 21"/>
+                      <line x1="15" y1="15" x2="21" y2="21"/>
+                      <line x1="4" y1="4" x2="9" y2="9"/>
+                    </svg>
+                  </div>
+                  <div class="style-name">Random</div>
+                  <div class="style-desc">Creative, varied, surprising values</div>
+                </div>
+              </label>
+            </div>
+            <button id="save-style-btn" class="btn-primary" style="margin-top: 16px;">Save Style</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">How It Works</h2>
+          </div>
+          <div class="card-body">
+            <div class="info-list">
+              <div class="info-item">
+                <span class="info-dot purple"></span>
+                <div><strong>Purple border</strong> = AI-generated field value</div>
+              </div>
+              <div class="info-item">
+                <span class="info-dot blue"></span>
+                <div><strong>Blue border</strong> = Manually stored field value</div>
+              </div>
+              <div class="info-item">
+                <span class="info-dot green"></span>
+                <div><strong>Right-click anywhere</strong> on a page to view/edit manual fields inline</div>
+              </div>
+              <div class="info-item">
+                <span class="info-dot yellow"></span>
+                <div><strong>Key rotation</strong>: Yellow dots = cooling down (15 min), Red = too many errors</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+</body>
+</html>

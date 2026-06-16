@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fill The Gap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <svg class="logo-icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#8b5cf6" />
+              <stop offset="100%" stop-color="#06b6d4" />
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="url(#logo-grad)" filter="url(#glow)" />
+        </svg>
+        <div class="logo-text">
+          <span class="logo-title">Fill The Gap</span>
+          <span class="logo-sub">Gemini Autopilot</span>
+        </div>
+      </div>
+      <button id="settings-btn" class="icon-btn" title="Open Settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Status Bar -->
+    <div id="status-bar" class="status-bar status-idle">
+      <div id="status-icon" class="status-dot"></div>
+      <span id="status-text">Ready to fill</span>
+    </div>
+
+    <!-- Main Container for content script states -->
+    <div class="main-content">
+      <!-- Main Fill Button -->
+      <div class="fill-section">
+        <button id="fill-btn" class="fill-btn">
+          <span id="btn-icon" class="btn-icon">
+            <!-- Idle SVG (Lightning) -->
+            <svg class="icon-svg idle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            <!-- Scanning SVG (Search) -->
+            <svg class="icon-svg scanning-icon hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <!-- Success SVG (Check) -->
+            <svg class="icon-svg success-icon hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </span>
+          <span id="btn-text">Auto-Fill This Page</span>
+        </button>
+      </div>
+
+      <!-- Loading Panel -->
+      <div id="loading-panel" class="loading-panel hidden">
+        <div class="spinner-container">
+          <div class="spinner-track"></div>
+          <div class="spinner-glow"></div>
+        </div>
+        <div id="loading-text" class="loading-text">Scanning fields...</div>
+        <div class="loading-sub">Using rotating keys with circuit breakers</div>
+        <div id="loading-logs" class="loading-logs hidden"></div>
+      </div>
+
+      <!-- Result Panel -->
+      <div id="result-panel" class="result-panel hidden">
+        <div class="result-grid">
+          <div class="result-card ai-card">
+            <div class="card-glow"></div>
+            <div class="result-count" id="ai-count">0</div>
+            <div class="result-label">AI Filled</div>
+            <div class="result-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="16" height="16" rx="2"/>
+                <rect x="9" y="9" width="6" height="6"/>
+                <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3"/>
+              </svg>
+            </div>
+          </div>
+          <div class="result-card manual-card">
+            <div class="card-glow"></div>
+            <div class="result-count" id="manual-count">0</div>
+            <div class="result-label">Manual</div>
+            <div class="result-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+          </div>
+          <div class="result-card skip-card">
+            <div class="card-glow"></div>
+            <div class="result-count" id="skip-count">0</div>
+            <div class="result-label">Skipped</div>
+            <div class="result-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="5 4 15 12 5 20 5 4"/>
+                <line x1="19" y1="5" x2="19" y2="19"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Panel -->
+      <div id="error-panel" class="error-panel hidden">
+        <div class="error-badge">
+          <svg class="error-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <div id="error-text" class="error-text">Something went wrong</div>
+        <button id="retry-btn" class="retry-btn">Try Again</button>
+      </div>
+    </div>
+
+    <!-- API Key Status -->
+    <div class="api-status-section">
+      <div class="api-status-header">Key Rotation Pool</div>
+      <div id="key-indicators" class="key-indicators">
+        <!-- Rendered by popup.ts -->
+      </div>
+    </div>
+
+    <!-- Footer actions -->
+    <div class="footer">
+      <button id="clear-btn" class="footer-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+        </svg>
+        Clear Highlights
+      </button>
+      <button id="manual-fields-btn" class="footer-btn accent">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Manual Fields
+        <span id="manual-badge" class="badge hidden">0</span>
+      </button>
+    </div>
+  </div>
+</body>
+</html>
