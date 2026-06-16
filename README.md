@@ -1,12 +1,12 @@
-# ⚡ Fill The Gap — Chrome Extension
+# Fill The Gap — Chrome Extension
 
 Intelligent Form Autofill Powered by **Gemini AI** with **Seamless API Key Rotation**.
 
-![Fill The Gap Showcase](C:/Users/drdev/.gemini/antigravity-ide/brain/49a36767-75ac-4ba9-b17c-afbd55847799/showcase_banner_1781615853756.png)
+![Fill The Gap Showcase](public/showcase_banner.png)
 
 ---
 
-## 📖 Overview
+## Overview
 
 **Fill The Gap** is a high-performance developer tool and utility extension that scans complex form layouts (standard DOM, Shadow DOM, and same-origin frames) and fills them with coherent, context-aware mock data. Leveraging the Gemini API, it dynamically recognizes page context and generates fields that align perfectly with the target page. 
 
@@ -14,50 +14,51 @@ It contains an enterprise-grade **multi-key rotation layer** that recovers from 
 
 ---
 
-## ⚡ System Architecture
+## System Architecture
 
 ```mermaid
-graph TD
-    User([User Clicks Icon]) --> SW[Service Worker Orchestrator]
-    SW -->|GET_FIELD_SCAN| CS[Content Script Scanner]
-    CS -->|Scan DOM / Shadow DOM / Iframes| Scanner[field-scanner.ts]
-    Scanner -->|Return Detected Fields| CS
-    CS -->|Fields & Page Context| SW
-    
-    SW -->|Local Storage Check| Storage[(chrome.storage.local)]
-    Storage -->|Manual Field Overrides| SW
-    
-    subgraph AI Generation Pipeline
-        SW -->|Clean non-manual fields| PB[prompt-builder.ts]
-        PB -->|Construct Coherent Prompt| Rotator[api-rotator.ts]
-        Rotator -->|Key Rotation / Fallback| Client[gemini-client.ts]
-        Client -->|REST generateContent| Gemini(Gemini API)
-        Gemini -->|Strict JSON| Client
-        Client -->|Repair truncated JSON| Rotator
+flowchart TD
+    subgraph Scanning Phase
+        A[User Action] -->|Trigger fill| B[Service Worker]
+        B -->|Scan DOM| C[Content Script Scanner]
+        C -->|Detect inputs & extract context| B
     end
-    
-    Rotator -->|Aggregated Map| SW
-    SW -->|VALUES_READY| CS
-    CS -->|Bypass Framework Setters| Filler[field-filler.ts]
-    Filler -->|Trigger Native Events| Input[Form Inputs]
-    Filler -->|Apply Style Highlights| Input
+
+    subgraph Orchestration Phase
+        B -->|Check storage| D[(chrome.storage.local)]
+        D -->|Manual override fields| E[Merge Pipeline]
+        B -->|Filter AI-generated fields| F[Prompt Builder]
+    end
+
+    subgraph Generation Pipeline
+        F -->|Coherent prompt| G[API Rotator]
+        G -->|Call API / Handle rotation| H[Gemini client]
+        H -->|Generate JSON payload| G
+        G -->|Parse & sanitize output| E
+    end
+
+    subgraph Injection Phase
+        E -->|Aggregated values| I[Content Script Filler]
+        I -->|Bypass framework setters| J[Form Inputs]
+        I -->|Highlight styling| J
+    end
 ```
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 | Feature | Description |
 | :--- | :--- |
-| **🤖 Universal DOM Scanner** | Evaluates explicit labels, placeholders, aria attributes, name, id, and nearby context tags recursively. |
-| **🔄 13-Key API Rotator** | Automatic load balancing and error recovery. Rotates keys on HTTP `429` / `RESOURCE_EXHAUSTED` with circuit breakers. |
-| **🔒 Manual Field Bypass** | Local storage cache for sensitive data (passwords, emails). These bypass Gemini entirely and are filled instantly. |
-| **🎨 Context Coherence** | Evaluates the entire page context in a single request, ensuring SKUs, descriptions, prices, and names belong to the same product category. |
-| **⚛️ Virtual DOM Compatibility** | Directly manipulates native property descriptors to bypass React, Vue, Svelte, and Angular event tracking. |
+| **Universal DOM Scanner** | Evaluates explicit labels, placeholders, aria attributes, name, id, and nearby context tags recursively. |
+| **13-Key API Rotator** | Automatic load balancing and error recovery. Rotates keys on HTTP `429` / `RESOURCE_EXHAUSTED` with circuit breakers. |
+| **Manual Field Bypass** | Local storage cache for sensitive data (passwords, emails). These bypass Gemini entirely and are filled instantly. |
+| **Context Coherence** | Evaluates the entire page context in a single request, ensuring SKUs, descriptions, prices, and names belong to the same product category. |
+| **Virtual DOM Compatibility** | Directly manipulates native property descriptors to bypass React, Vue, Svelte, and Angular event tracking. |
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Install Dependencies
 ```bash
@@ -86,7 +87,7 @@ npm run dev
 
 ---
 
-## ⚙️ Configuration & Key Rotation
+## Configuration & Key Rotation
 
 Access the extension **Settings** to set up:
 
@@ -95,7 +96,7 @@ Access the extension **Settings** to set up:
 
 ---
 
-## 🛡️ Security & Privacy
+## Security & Privacy
 
 * **Zero-Knowledge Architecture:** Manual fields (passwords, usernames, phone numbers) are processed directly inside your browser container using `chrome.storage.local`. They are **never** bundled in payload context sent to Google Gemini endpoints.
 * **Strict Local Scope:** Your API keys are stored entirely in local browser sandboxes and are only transmitted directly to Google's official Gemini API REST endpoints.

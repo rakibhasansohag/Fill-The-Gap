@@ -460,6 +460,7 @@ html, body {
 /* ── Result Panel ────────────────────────────────────────────── */
 
 .result-panel {
+  margin-top: 16px;
   animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
