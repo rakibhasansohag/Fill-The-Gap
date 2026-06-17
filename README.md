@@ -58,32 +58,50 @@ flowchart TD
 
 ---
 
-## Quick Start
+## Installation and Setup
 
-### 1. Install Dependencies
-```bash
-npm install
-```
+### For General Users (Pre-built Release - Easiest)
+You do not need to compile any code. Simply download the pre-packaged files from the **Releases** section on the right side of this repository.
 
-### 2. Generate Extension Icons
-```bash
-npm run generate-icons
-```
+#### Option A: Install via CRX File (Recommended)
+1. Download `fill-the-gap.crx` from the latest release.
+2. In Google Chrome, navigate to `chrome://extensions/`.
+3. Enable **Developer mode** via the toggle switch in the top-right corner.
+4. Drag and drop the downloaded `fill-the-gap.crx` file anywhere onto the Extensions page. Chrome will ask you to add the extension.
 
-### 3. Build the Extension
-```bash
-# Production Bundle
-npm run build
+#### Option B: Install via ZIP Folder
+1. Download `fill-the-gap.zip` from the latest release and extract (unzip) it.
+2. In Google Chrome, navigate to `chrome://extensions/`.
+3. Enable **Developer mode** via the toggle switch in the top-right corner.
+4. Click **Load unpacked** in the top-left and select the extracted folder.
 
-# Development Mode (watch files)
-npm run dev
-```
+---
 
-### 4. Load in Google Chrome
-1. Navigate to `chrome://extensions/` in your browser.
-2. Toggle **Developer mode** in the top-right corner.
-3. Click **Load unpacked** in the top-left.
-4. Select the output `dist/` directory created in your workspace root.
+### For Developers (Build from Source)
+If you want to modify the code or compile the extension manually:
+
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Generate Extension Icons**
+   ```bash
+   npm run generate-icons
+   ```
+
+3. **Build the Extension**
+   ```bash
+   # Production Bundle
+   npm run build
+
+   # Development Mode (watch files)
+   npm run dev
+   ```
+
+4. **Load in Chrome**
+   - Go to `chrome://extensions/` and enable **Developer mode**.
+   - Click **Load unpacked** and select the compiled `dist/` folder in your workspace root.
 
 ---
 
